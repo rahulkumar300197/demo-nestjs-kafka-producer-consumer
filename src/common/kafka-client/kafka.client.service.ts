@@ -1,19 +1,17 @@
 import {
   Inject,
   Injectable,
-  OnApplicationBootstrap,
   OnApplicationShutdown,
+  OnModuleInit,
 } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 
 @Injectable()
-export class KafkaClientService
-  implements OnApplicationBootstrap, OnApplicationShutdown
-{
+export class KafkaClientService implements OnModuleInit, OnApplicationShutdown {
   constructor(@Inject('CLIENT_KAFKA') private readonly client: ClientKafka) {}
 
-  async onApplicationBootstrap(): Promise<void> {
+  async onModuleInit(): Promise<void> {
     await this.client.connect();
   }
 

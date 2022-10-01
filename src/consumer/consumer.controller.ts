@@ -27,15 +27,21 @@ export class ConsumerController {
         _.get<string>(message, 'key'),
         _.get<any>(message, 'value'),
       );
-      await consumer.commitOffsets([{ topic, partition, offset }]);
-      consumer.pause([{ topic, partitions: [partition] }]);
-      await this.consumerService.wait(2000);
-      consumer.resume([{ topic, partitions: [partition] }]);
+      process.nextTick(async () => {
+        await consumer.commitOffsets([
+          { topic, partition, offset: (Number(offset) + 1).toString() },
+        ]);
+        consumer.pause([{ topic, partitions: [partition] }]);
+        await this.consumerService.wait(2000);
+        consumer.resume([{ topic, partitions: [partition] }]);
+      });
     } catch (e) {
       this.logger.error('Error In Consumer', e);
-      consumer.pause([{ topic, partitions: [partition] }]);
-      await this.consumerService.wait(20000);
-      consumer.resume([{ topic, partitions: [partition] }]);
+      process.nextTick(async () => {
+        consumer.pause([{ topic, partitions: [partition] }]);
+        await this.consumerService.wait(20000);
+        consumer.resume([{ topic, partitions: [partition] }]);
+      });
       throw e;
     }
   }

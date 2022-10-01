@@ -3,7 +3,10 @@ import { KafkaClientService } from '../common/kafka-client/kafka.client.service'
 import mongoose, { Connection } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Messages, MessagesDocument } from './models/messages.model';
-import { MessagesMeta, MessagesMetaDocument } from './models/messages-meta.model';
+import {
+  MessagesMeta,
+  MessagesMetaDocument,
+} from './models/messages-meta.model';
 import { InjectConnection } from '@nestjs/mongoose/dist/common/mongoose.decorators';
 
 @Injectable()
@@ -18,8 +21,7 @@ export class ConsumerService {
     @InjectModel(MessagesMeta.name)
     readonly messagesMetaModel: mongoose.Model<MessagesMetaDocument>,
     @InjectConnection() private readonly connection: Connection,
-  ) {
-  }
+  ) {}
 
   async processMessage(offset: string, key: string, value: any) {
     ConsumerService.counter++;
